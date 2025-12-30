@@ -1,0 +1,46 @@
+import React, { useState, useEffect } from 'react';
+
+export default function LuArmorStats() {
+  const [count, setCount] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCount();
+    const interval = setInterval(fetchCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchCount = async () => {
+    try {
+      const response = await fetch('/api/luarmor-stats');
+      const data = await response.json();
+      
+      if (data.success) {
+        setCount(data.activeUsers);
+      }
+    } catch (err) {
+      console.error('Failed to fetch count');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-6xl font-bold text-white mb-8">
+          Whitelisted Users
+        </h1>
+        {loading ? (
+          <div className="text-8xl font-bold text-purple-400 animate-pulse">
+            ...
+          </div>
+        ) : (
+          <div className="text-9xl font-bold text-purple-400">
+            {count}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
