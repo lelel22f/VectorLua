@@ -1,46 +1,57 @@
-import React, { useState, useEffect } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LuArmor Stats</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">
+    import { useState, useEffect } from 'https://esm.sh/react@18';
+    import { createRoot } from 'https://esm.sh/react-dom@18/client';
 
-export default function LuArmorStats() {
-  const [count, setCount] = useState(null);
-  const [loading, setLoading] = useState(true);
+    function LuArmorStats() {
+      const [count, setCount] = useState(null);
+      const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchCount();
-    const interval = setInterval(fetchCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
+      useEffect(() => {
+        fetchCount();
+        const interval = setInterval(fetchCount, 30000);
+        return () => clearInterval(interval);
+      }, []);
 
-  const fetchCount = async () => {
-    try {
-      const response = await fetch('/api/luarmor-stats');
-      const data = await response.json();
-      
-      if (data.success) {
-        setCount(data.activeUsers);
-      }
-    } catch (err) {
-      console.error('Failed to fetch count');
-    } finally {
-      setLoading(false);
+      const fetchCount = async () => {
+        try {
+          const response = await fetch('/api/luarmor-stats');
+          const data = await response.json();
+          
+          if (data.success) {
+            setCount(data.activeUsers);
+          }
+        } catch (err) {
+          console.error('Failed to fetch count');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return React.createElement('div', {
+        className: 'min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center'
+      },
+        React.createElement('div', { className: 'text-center' },
+          React.createElement('h1', { className: 'text-6xl font-bold text-white mb-8' }, 'Whitelisted Users'),
+          loading ? 
+            React.createElement('div', { className: 'text-8xl font-bold text-purple-400 animate-pulse' }, '...') :
+            React.createElement('div', { className: 'text-9xl font-bold text-purple-400' }, count)
+        )
+      );
     }
-  };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold text-white mb-8">
-          Whitelisted Users
-        </h1>
-        {loading ? (
-          <div className="text-8xl font-bold text-purple-400 animate-pulse">
-            ...
-          </div>
-        ) : (
-          <div className="text-9xl font-bold text-purple-400">
-            {count}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+    createRoot(document.getElementById('root')).render(React.createElement(LuArmorStats));
+  </script>
+</body>
+</html>
